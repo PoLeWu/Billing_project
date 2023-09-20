@@ -970,7 +970,6 @@ int main()
 
 
 
-
             while(true) //登入後的動作
             {
                 cout << "使用者 ： " << loginAccount << endl;
