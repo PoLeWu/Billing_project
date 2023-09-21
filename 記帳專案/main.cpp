@@ -209,7 +209,7 @@ bool logCompare(Log a, Log b) // > return true， <= return false
     }
     else if(compareResult == 0)
     {
-        return a.getValue() > b.getValue();
+        return false;
     }
 
     //unreachable
@@ -230,13 +230,33 @@ bool logCompare2(Log a, Log b)  // >= return true， < return false
     }
     else if(compareResult == 0)
     {
-        return a.getValue() >= b.getValue();
+        return true;
     }
 
     //unreachable
     return false;
 }
 
+
+bool insertionLogCompare(Log a, Log b) // > return true， < return false ， = compare value
+{
+    int compareResult = dateCompare(a.getTimeStamp(), b.getTimeStamp());
+    if(compareResult == -1)
+    {
+        return false;
+    }
+    else if(compareResult == 1)
+    {
+        return true;
+    }
+    else if(compareResult == 0)
+    {
+        return a.getValue() > b.getValue();
+    }
+
+    //unreachable
+    return false;
+}
 
 class Account
 {
@@ -265,9 +285,7 @@ public:
         accountLog.push_back(newLog); //讓他有位置
 
         int j = accountLog.size()-2;   //現在看到第幾個
-        while (j >= 0 && logCompare(accountLog[j], newLog)) //如果前面的比較大，而且有數字
-
-
+        while (j >= 0 && insertionLogCompare(accountLog[j], newLog)) //如果前面的比較大，而且有數字
         {
             accountLog[j+1] = accountLog[j];
             j--;
@@ -317,6 +335,7 @@ public:
             }
         }
 
+
         if(l == accountLog.size()-1)
         {
             if(logCompare(myLog,accountLog[accountLog.size()-1]))
@@ -347,9 +366,10 @@ public:
             }
         }
 
+
         if(l == accountLog.size()-1)
         {
-            if(logCompare(myLog,accountLog[accountLog.size()-1]))
+            if(logCompare2(myLog,accountLog[accountLog.size()-1]))
             {
                 l++;
             }
@@ -371,7 +391,10 @@ public:
 
         for(int i = startIndex; i < endIndex; i++)
         {
-            accountLog[i].printInfo();
+            if(startVal <= accountLog[i].getValue()  && accountLog[i].getValue() <= endVal)
+            {
+                accountLog[i].printInfo();
+            }
         }
 
         cout << endl << "請按任意鍵繼續......";
@@ -560,17 +583,21 @@ bool checkDate(string date)
 int main()
 {
 
-    string loginAccount = "";//登入帳號
+
+    string loginAccount = "";
+
+
+
 
     while(true)
     {
-        cout << "歡迎使用記帳系統!" << endl;
-        cout << "1.登入" << endl;
-        cout << "2.註冊" << endl;
-        cout << "3.離開" << endl;
+        cout << "Welcome to the accounting system!" << endl;
+        cout << "1.Log in" << endl;
+        cout << "2.Register" << endl;
+        cout << "3.Leave" << endl;
 
 
-        cout << "請輸入指令: ";
+        cout << "Please enter the command: ";
         int option;
         cin >> option;
 
@@ -580,8 +607,8 @@ int main()
 
         if(option == 1)
         {
-            cout << "登入頁面" << endl;
-            cout<<"請輸入帳號:";
+            cout << "Login page" << endl;
+            cout<<"Please enter your account:";
 
 
             string accountIn;
@@ -636,7 +663,7 @@ int main()
                     {
 
 
-                        cout << "請輸入密碼(剩餘次數" << failCount << "次): ";
+                        cout << "Please enter password(remaining times:" << failCount << "times): ";
                         string password;
                         cin >> password;
 
@@ -646,7 +673,7 @@ int main()
 
                         if(password == readPassword)
                         {
-                            cout << "登入完成" << endl << endl;
+                            cout << "Login completed!" << endl << endl;
                             loginAccount = accountIn;
                             break;
                         }
@@ -657,12 +684,12 @@ int main()
                             failCount--;
                             if(failCount == 0)
                             {
-                                cout << "輸入次數用完，將導向首頁" << endl << endl;
+                                cout << "Exhausted number of inputs,leading to the homepage." << endl << endl;
                                 break;
                             }
                             else
                             {
-                                cout << "密碼錯誤，請在輸入一次!" << endl;
+                                cout << "The password is wrong, please enter it again!" << endl;
                             }
                         }
                     }
@@ -677,14 +704,14 @@ int main()
             if(accountSame==false)
             {
                 system("cls");
-                cout<<"查無此帳號!"<<endl << endl;
+                cout<<"This account is not found!"<<endl << endl;
             }
         }
         else if(option == 2)
         {
             while(true)
             {
-                cout << "請輸入註冊的帳號(包含英文字母大小寫,數字,長度8~16): ";
+                cout << "Please enter the registered account number (including uppercase and lowercase English letters, numbers, length 8~16): ";
 
 
                 string account;
@@ -749,7 +776,7 @@ int main()
 
                         if(nothingSame == false)
                         {
-                            cout << endl << "帳號已被人使用!" << endl;
+                            cout << endl << "The account has been used!" << endl;
                             continue;
                         }
 
@@ -758,7 +785,7 @@ int main()
 
                         while(true)
                         {
-                            cout <<"請輸入註冊的密碼(包含英文字母大小寫,數字,長度8~16): ";
+                            cout <<"Please enter the registered password (including uppercase and lowercase English letters, numbers, length 8~16): ";
                             string password;
                             cin >> password;
                             system("cls");
@@ -783,7 +810,7 @@ int main()
 
                                 if(password_allRight == true)
                                 {
-                                    cout << "註冊完成" << endl << endl;
+                                    cout << "Registration is complete!" << endl << endl;
 
 
                                     //把帳號密碼寫入檔案
@@ -807,18 +834,18 @@ int main()
                                 }
                                 else
                                 {
-                                    cout  << "密碼包含不合法字元" << endl <<endl;
+                                    cout  << "Password contains illegal characters." << endl <<endl;
                                 }
                             }
                             else
                             {
                                 if(password_len < 8)
                                 {
-                                    cout << "密碼長度過短!" << endl << endl;
+                                    cout << "Password length is too short!" << endl << endl;
                                 }
                                 else
                                 {
-                                    cout << "密碼長度過長!" << endl << endl;
+                                    cout << "Password length is too long!" << endl << endl;
                                 }
                             }
                         }
@@ -826,7 +853,7 @@ int main()
                     }
                     else
                     {
-                        cout << "帳號包含不合法字元" << endl << endl;
+                        cout << "Account contains illegal characters." << endl << endl;
                     }
 
 
@@ -835,11 +862,11 @@ int main()
                 {
                     if(len < 8)
                     {
-                        cout << "帳號長度過短!" << endl << endl;
+                        cout << "Account length is too short!" << endl << endl;
                     }
                     else
                     {
-                        cout << "帳號長度過長!" << endl << endl;
+                        cout << "Account length is too long!" << endl << endl;
                     }
                 }
 
@@ -848,7 +875,7 @@ int main()
         }
         else if(option == 3)
         {
-            cout << "謝謝使用" << endl;
+            cout << "Thank you for using." << endl;
             break;
         }
 
@@ -973,10 +1000,10 @@ int main()
 
             while(true) //登入後的動作
             {
-                cout << "使用者 ： " << loginAccount << endl;
-                cout << "1. 查帳" << endl;
-                cout << "2. 新增帳目" << endl;
-                cout << "3. 登出" << endl;
+                cout << "User : " << loginAccount << endl;
+                cout << "1. Audit" << endl;
+                cout << "2. Add new account" << endl;
+                cout << "3. Log out" << endl;
 
 
                 int action;
@@ -988,8 +1015,8 @@ int main()
 
                 if(action == 1)
                 {
-                    cout << "1. 查詢所有帳目" << endl;
-                    cout << "2. 依照日期及金額查詢" << endl;
+                    cout << "1. Check all accounts." << endl;
+                    cout << "2. Query based on date and amount.(yyyy/mm/dd)" << endl;
 
 
                     int checkMode;
@@ -1002,7 +1029,7 @@ int main()
                     if(checkMode == 1)
                     {
                         db[loginAccount].print();
-                        cout << endl << "請按任意鍵繼續......";
+                        cout << endl << "Please press any key to continue......";
                         char input = _getch();
                         system("cls");
                     }
@@ -1014,7 +1041,7 @@ int main()
 
                         while(true)
                         {
-                            cout << "請輸入查詢起始日期(yyyy/mm/dd)：";
+                            cout << "Please enter the query starting date:(yyyy/mm/dd)";
                             cin >> startDate;
                             system("cls");
                             if(checkDate(startDate) == true)
@@ -1023,26 +1050,26 @@ int main()
                             }
                             else
                             {
-                                cout << "輸入日期錯誤，請再試一次！(yyyy/mm/dd)" << endl << endl;
+                                cout << "Wrong date entered, please try again!(yyyy/mm/dd)" << endl << endl;
                             }
                         }
 
 
                         while(true)
                         {
-                            cout << "請輸入查詢結束日期：(yyyy/mm/dd)";
+                            cout << "Please enter the query end date:(yyyy/mm/dd)";
                             cin >> endDate;
                             system("cls");
                             if(checkDate(endDate) ==  false)
                             {
-                                cout << "輸入日期錯誤，請再試一次！(yyyy/mm/dd)" << endl << endl;
+                                cout << "Wrong date entered, please try again!(yyyy/mm/dd)" << endl << endl;
                                 continue;
                             }
                             if(dateCompare(endDate,startDate) == -1)
 
 
                             {
-                                cout << "結束日期必須在起始日期之後，請再試一次！(yyyy/mm/dd)" << endl << endl;
+                                cout << "End date must be after start date, please try again!(yyyy/mm/dd)" << endl << endl;
                                 continue;
                             }
                             break;
@@ -1051,14 +1078,14 @@ int main()
                         }
 
 
-                        cout << "請輸入查詢最低金額：";
+                        cout << "Please enter the minimum amount for inquiry:";
                         cin >> startValue;
                         system("cls");
 
 
                         while(true)
                         {
-                            cout << "請輸入查詢最高金額：";
+                            cout << "Please enter the maximum amount for inquiry:";
                             cin >> endValue;
                             system("cls");
 
@@ -1069,7 +1096,7 @@ int main()
                             }
                             else
                             {
-                                cout << "最高金額必須 >= 最低金額！" << endl << endl;
+                                cout << "Maximum amount must >= Minimum amount!" << endl << endl;
                             }
                         }
 
@@ -1090,7 +1117,7 @@ int main()
                     //輸入日期
                     while(true)
                     {
-                        cout << "請輸入日期：(yyyy/mm/dd)" << endl;
+                        cout << "Please enter date:(yyyy/mm/dd)" << endl;
                         cin >> date;
 
 
@@ -1103,17 +1130,17 @@ int main()
                         }
                         else
                         {
-                            cout << "輸入錯誤，請再輸入一次(yyyy/mm/dd)" << endl;
+                            cout << "Input error, please enter again" << endl;
                         }
                     }
                     //輸入金額
-                    cout << "請輸入金額：" << endl;
+                    cout << "Please enter the amount:" << endl;
                     cin >> newValue;
                     system("cls");
 
 
                     //輸入說明
-                    cout << "請輸入帳目說明(英文)：" << endl;
+                    cout << "Please enter account description (English):" << endl;
                     getline(cin,newDescription);
                     getline(cin,newDescription);
                     system("cls");
@@ -1136,7 +1163,7 @@ int main()
 
 
 
-                    cout << "新增帳目完成！" << endl << endl;
+                    cout << "Adding new account is completed!" << endl << endl;
 
 
 
@@ -1157,10 +1184,9 @@ int main()
 
 
             }
+
+
         }
     }
-
-
-
 
 }
