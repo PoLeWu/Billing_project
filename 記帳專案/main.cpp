@@ -997,7 +997,6 @@ int main()
 
 
 
-
             while(true) //登入後的動作
             {
                 cout << "User : " << loginAccount << endl;
